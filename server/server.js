@@ -15,14 +15,13 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
     //"socket" is the indiv connected, not all the users
     console.log("New user connected.");
 
-    socket.emit("newMessage", {
-        to: "tara",
-        text: "hiya",
-        createdAt: 123
-    });
-
     socket.on("createMessage",(message)=>{
         console.log("Message received from client", message);
+        io.emit("newMessage",{  //io.emit emits an event to all connections
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
     });
 
     socket.on("disconnect", () => {

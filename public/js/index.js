@@ -4,10 +4,6 @@ let socket = io(); //"socket" is the websocket that is created by io();
 socket.on("connect", function () { //upon connecting to the server, callback below is called
     console.log("Connected to server.");
 
-    socket.emit("createMessage", { //send info out
-        from: "chris",
-        text: "lolol"
-    })
 });
 
 socket.on("disconnect", function () { //calls callback function below when event occurs
