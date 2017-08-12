@@ -15,18 +15,34 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
     //"socket" is the indiv connected, not all the users
     console.log("New user connected.");
 
-    socket.on("createMessage",(message)=>{
-        console.log("Message received from client", message);
-        io.emit("newMessage",{  //io.emit emits an event to all connections
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
+    socket.emit("newMessage", { //emits an event to only socket (indiv user)
+        from: "Admin",
+        text: "Welcome to the chat app!"
     });
 
-    socket.on("disconnect", () => {
-        console.log("User disconnected.");
+    socket.broadcast.emit("newMessage", { //emits an event to all users except socket
+        from: "Admin",
+        text: "New user joined!"
     });
+
+socket.on("createMessage", (message) => {
+    console.log("Message received from client", message);
+    io.emit("newMessage", {  //io.emit emits an event to all connections
+        from: message.from,
+        text: message.text,
+        createdAt: new Date().getTime()
+    });
+
+    // socket.broadcast.emit("newMessage",{ //emits event to everyone except socket
+    //      from: message.from,
+    //      text: message.text,
+    //      createdAt: new Date().getTime()
+    // });
+});
+
+socket.on("disconnect", () => {
+    console.log("User disconnected.");
+});
 });
 
 server.listen(port, () => {
