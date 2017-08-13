@@ -27,7 +27,7 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
 
         //io.emit emits an event to all connections
         io.emit("newMessage", generateMessage(message.from, message.text));
-        callback("This is from the server."); //calls the callback function from createMessage (in index.js) - this is the server awknowledging that it received the data
+        callback(); //calls the callback function from createMessage (in index.js) - this is the server awknowledging that it received the data
 
     });
 
