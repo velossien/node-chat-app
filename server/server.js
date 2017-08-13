@@ -3,7 +3,7 @@ const http = require("http"); //built in node module
 const express = require("express");
 const socketIO = require("socket.io");
 
-const {generateMessage} = require("./utils/message");
+const { generateMessage, generateLocationMessage } = require("./utils/message");
 const publicPath = path.join(__dirname, "../public"); //this is a better way of doing paths when you need ot go up and out of folders
 const port = process.env.PORT || 3000;
 let app = express();
@@ -16,24 +16,28 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
     //"socket" is the indiv connected, not all the users
     console.log("New user connected.");
 
-    //emits an event to only socket (indiv user)
-    socket.emit("newMessage", generateMessage("Admin","Welcome to the chat app!"));
+    //emits an event only to socket (indiv user)
+    socket.emit("newMessage", generateMessage("Admin", "Welcome to the chat app!"));
 
     //emits an event to all users except socket
-    socket.broadcast.emit("newMessage", generateMessage("Admin","New user joined!"));
+    socket.broadcast.emit("newMessage", generateMessage("Admin", "New user joined!"));
 
-socket.on("createMessage", (message,callback) => {
-    console.log("Message received from client", message);
+    socket.on("createMessage", (message, callback) => {
+        console.log("Message received from client", message);
 
-    //io.emit emits an event to all connections
-    io.emit("newMessage", generateMessage(message.from, message.text));
-    callback("This is from the server."); //calls the callback function from createMessage (in index.js) - this is the server awknowledging that it received the data
+        //io.emit emits an event to all connections
+        io.emit("newMessage", generateMessage(message.from, message.text));
+        callback("This is from the server."); //calls the callback function from createMessage (in index.js) - this is the server awknowledging that it received the data
 
-});
+    });
 
-socket.on("disconnect", () => {
-    console.log("User disconnected.");
-});
+    socket.on("createLocationMessage", (coords) => {
+        io.emit("newLocationMessage", generateLocationMessage("Admin", coords.latitude, coords.longitude))
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected.");
+    });
 });
 
 server.listen(port, () => {
