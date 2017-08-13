@@ -9,8 +9,6 @@ describe("generateMessage",()=>{
 
         let res = generateMessage(from, text);
 
-        console.log(res);
-
         expect(res.from).toBe(from);
         expect(res.text).toBe(text);
         expect(res.createdAt).toBeA("number");
@@ -26,8 +24,6 @@ describe("generateLocationMessage",()=>{
         let long="98";
 
         let locationMessage = generateLocationMessage(from, lat, long);
-
-        console.log(locationMessage);
 
         expect(locationMessage.from).toBe(from);
         expect(locationMessage.url).toBe(`https://www.google.com/maps/?q=${lat},${long}`);

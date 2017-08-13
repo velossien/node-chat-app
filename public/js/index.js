@@ -9,20 +9,23 @@ socket.on("disconnect", function () { //calls callback function below when event
     console.log("Disconnected from server.");
 });
 
+
 // sends message sent to an ordered list on the webpage
 socket.on("newMessage", function (message) {
+    let formattedTime= moment(message.createdAt).format("h:mm a");
     console.log("New Message!", message);
     let li = jQuery("<li></li>");
-    li.text(`${message.from}: ${message.text}`);
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
     jQuery("#messages").append(li); //add it as the last child
 });
 
 socket.on("newLocationMessage",function(message){
+    let formattedTime= moment(message.createdAt).format("h:mm a");
     let li = jQuery("<li></li>");
     let a = jQuery("<a target='_blank'>My current location</a>");
 
-    li.text(`${message.from}: `);
+    li.text(`${message.from} ${formattedTime}: `);
     a.attr("href", message.url);
 
     li.append(a);
