@@ -3,6 +3,7 @@ const http = require("http"); //built in node module
 const express = require("express");
 const socketIO = require("socket.io");
 
+const {generateMessage} = require("./utils/message");
 const publicPath = path.join(__dirname, "../public"); //this is a better way of doing paths when you need ot go up and out of folders
 const port = process.env.PORT || 3000;
 let app = express();
@@ -15,23 +16,17 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
     //"socket" is the indiv connected, not all the users
     console.log("New user connected.");
 
-    socket.emit("newMessage", { //emits an event to only socket (indiv user)
-        from: "Admin",
-        text: "Welcome to the chat app!"
-    });
+    //emits an event to only socket (indiv user)
+    socket.emit("newMessage", generateMessage("Admin","Welcome to the chat app!"));
 
-    socket.broadcast.emit("newMessage", { //emits an event to all users except socket
-        from: "Admin",
-        text: "New user joined!"
-    });
+    //emits an event to all users except socket
+    socket.broadcast.emit("newMessage", generateMessage("Admin","New user joined!"));
 
 socket.on("createMessage", (message) => {
     console.log("Message received from client", message);
-    io.emit("newMessage", {  //io.emit emits an event to all connections
-        from: message.from,
-        text: message.text,
-        createdAt: new Date().getTime()
-    });
+
+    //io.emit emits an event to all connections
+    io.emit("newMessage", generateMessage(message.from, message.text));
 
     // socket.broadcast.emit("newMessage",{ //emits event to everyone except socket
     //      from: message.from,
