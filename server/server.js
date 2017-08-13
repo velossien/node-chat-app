@@ -22,17 +22,13 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
     //emits an event to all users except socket
     socket.broadcast.emit("newMessage", generateMessage("Admin","New user joined!"));
 
-socket.on("createMessage", (message) => {
+socket.on("createMessage", (message,callback) => {
     console.log("Message received from client", message);
 
     //io.emit emits an event to all connections
     io.emit("newMessage", generateMessage(message.from, message.text));
+    callback("This is from the server."); //calls the callback function from createMessage (in index.js) - this is the server awknowledging that it received the data
 
-    // socket.broadcast.emit("newMessage",{ //emits event to everyone except socket
-    //      from: message.from,
-    //      text: message.text,
-    //      createdAt: new Date().getTime()
-    // });
 });
 
 socket.on("disconnect", () => {
