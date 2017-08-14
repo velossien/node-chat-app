@@ -11,17 +11,41 @@ socket.on("disconnect", function () { //calls callback function below when event
 
 
 // sends message sent to an ordered list on the webpage
-socket.on("newMessage", function (message) {
+socket.on('newMessage', function (message) {
+    let formattedTime = moment(message.createdAt).format('h:mm a');
+    let template = jQuery('#message-template').html();
+    let html = Mustache.render(template, {
+        text: message.text,
+        from: message.from,
+        createdAt: formattedTime
+    });
+
+    jQuery("#messages").append(html);
+
+    /*--How it would be done without mustache:
+
     let formattedTime= moment(message.createdAt).format("h:mm a");
     console.log("New Message!", message);
     let li = jQuery("<li></li>");
     li.text(`${message.from} ${formattedTime}: ${message.text}`);
 
     jQuery("#messages").append(li); //add it as the last child
+    */
 });
 
-socket.on("newLocationMessage",function(message){
-    let formattedTime= moment(message.createdAt).format("h:mm a");
+socket.on("newLocationMessage", function (message) {
+    let formattedTime = moment(message.createdAt).format("h:mm a");
+    let template = jQuery("#location-message-template").html();
+    let html = Mustache.render(template, {
+        from: message.from,
+        createdAt: formattedTime,
+        url: message.url
+    });
+
+    jQuery("#messages").append(html);
+
+    /*--How it would be done without mustache:
+
     let li = jQuery("<li></li>");
     let a = jQuery("<a target='_blank'>My current location</a>");
 
@@ -30,6 +54,7 @@ socket.on("newLocationMessage",function(message){
 
     li.append(a);
     jQuery("#messages").append(li); 
+    */
 });
 
 let messageTextbox = jQuery("[name=message]");
@@ -62,9 +87,9 @@ locationButton.on("click", function () {
             longitude: position.coords.longitude
         });
     }, function () {
-        locationButton.removeAttr("disabled").text("Send location"); 
+        locationButton.removeAttr("disabled").text("Send location");
         alert("Unable to fetch location.");
-        
+
     });
 });
 
