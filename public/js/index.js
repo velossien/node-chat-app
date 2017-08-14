@@ -1,6 +1,24 @@
 
 let socket = io(); //"socket" is the websocket that is created by io();
 
+function scrollToBottom() {
+
+    //Selectors
+    let messages = jQuery("#messages"); //selects the messages container
+    let newMessage = messages.children("li:last-child"); //.children method lets you write a selector specific to the children of "messages"
+
+    //Heights
+    let clientHeight = messages.prop("clientHeight"); //.prop gives a cross-browser way of fetching a property
+    let scrollTop = messages.prop("scrollTop");
+    let scrollHeight = messages.prop("scrollHeight");
+    let newMessageHeight = newMessage.innerHeight();
+    let lastMessageHeight = newMessage.prev().innerHeight();
+
+    if (clientHeight + scrollTop + newMessageHeight +lastMessageHeight >= scrollHeight) {
+        messages.scrollTop(scrollHeight);
+    };
+};
+
 socket.on("connect", function () { //upon connecting to the server, callback below is called
     console.log("Connected to server.");
 });
@@ -21,7 +39,7 @@ socket.on('newMessage', function (message) {
     });
 
     jQuery("#messages").append(html);
-
+    scrollToBottom();
     /*--How it would be done without mustache:
 
     let formattedTime= moment(message.createdAt).format("h:mm a");
@@ -43,6 +61,7 @@ socket.on("newLocationMessage", function (message) {
     });
 
     jQuery("#messages").append(html);
+    scrollToBottom();
 
     /*--How it would be done without mustache:
 
