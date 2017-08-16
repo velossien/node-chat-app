@@ -24,7 +24,7 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
             return callback("Name and room name are required."); //sends back error if name and room are not valid
         }
 
-        socket.join(params.room); //joins a room with the name given by params.room (.join is part of socket.io)
+        socket.join(params.room.toLowerCase()); //joins a room with the name given by params.room (.join is part of socket.io)
         users.removeUser(socket.id); //removes user from any other rooms
         users.addUser(socket.id, params.name, params.room); //adds user to room
 
