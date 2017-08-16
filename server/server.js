@@ -36,7 +36,7 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
             });
 
             if (duplicateUserList.length > 0) {
-                return callback("User name taken. Please choose another user name.");
+                return callback("Display name taken. Please choose another name.");
             };
         };
 
@@ -75,7 +75,7 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
 
         if (user) { //if user is actually removed, thennn...
             io.to(user.room).emit("updateUserList", users.getUserList(user.room)); //emits and event called "updateUserList" to all users in the room that the user is in (user.room).  This gets a new user list by using the function defined in users.js "getUserList". In chat.js when this event occurs, the new users list is appended to a ordered list and sent to a section of the webpage
-            io.to(user.room).emit("newMessage", generateMessage("Admin", `${user.name} has left`)); //emits an event called "newMessage".  A function called generateMessage is called which is defined in message.js. This returns a message object.  In chat.js, when this event occurs this message is used to create a new message.
+            io.to(user.room).emit("newMessage", generateMessage("Admin", `${user.name} has left.`)); //emits an event called "newMessage".  A function called generateMessage is called which is defined in message.js. This returns a message object.  In chat.js, when this event occurs this message is used to create a new message.
         }
     });
 });

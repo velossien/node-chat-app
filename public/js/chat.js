@@ -14,7 +14,7 @@ function scrollToBottom() {
     let newMessageHeight = newMessage.innerHeight();
     let lastMessageHeight = newMessage.prev().innerHeight();
 
-    if (clientHeight + scrollTop + newMessageHeight +lastMessageHeight >= scrollHeight) {
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
         messages.scrollTop(scrollHeight);
     };
 };
@@ -24,11 +24,11 @@ socket.on("connect", function () { //upon connecting to the server, callback bel
 
     //jQuery has a built-in function that takes an object and makes it into a set of parameters that can be added onto a url.  deparam is a custom-made function that does the opposite of this.
 
-    socket.emit("join", params, function(err){ //emits an event called "join" -- will be emitted by client and heard by server - when server hears this event it will go through the process of setting up the room
-        if(err){
+    socket.emit("join", params, function (err) { //emits an event called "join" -- will be emitted by client and heard by server - when server hears this event it will go through the process of setting up the room
+        if (err) {
             alert(err);
-            window.location.href ="/"; //redirects them back the homepage
-        } else{
+            window.location.href = "/"; //redirects them back the homepage
+        } else {
             console.log("no error");
         };
     });
@@ -38,10 +38,10 @@ socket.on("disconnect", function () { //calls callback function below when event
     console.log("Disconnected from server.");
 });
 
-socket.on("updateUserList", function(users){ //defining an event called "updateUserList"
+socket.on("updateUserList", function (users) { //defining an event called "updateUserList"
     let ol = jQuery("<ol></ol>");
 
-    users.forEach(function(user){
+    users.forEach(function (user) {
         ol.append(jQuery("<li></li>").text(user)); //loops through users and adds users one at a time in li tags to an ordered list
     });
 
