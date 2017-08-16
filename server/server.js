@@ -37,25 +37,30 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
     });
 
     socket.on("createMessage", (message, callback) => {
-        console.log("Message received from client", message);
+        let user = users.getUser(socket.id);
 
-        //io.emit emits an event to all connections
-        io.emit("newMessage", generateMessage(message.from, message.text));
+        if (user && isRealString(message.text)) {
+            //io.emit emits an event to all connections
+            io.to(user.room).emit("newMessage", generateMessage(user.name, message.text));
+        }
+
+
         callback(); //calls the callback function from createMessage (in index.js) - this is the server awknowledging that it received the data
 
     });
 
     socket.on("createLocationMessage", (coords) => {
-        io.emit("newLocationMessage", generateLocationMessage("Admin", coords.latitude, coords.longitude))
+        let user = users.getUser(socket.id);
+        io.to(user.room).emit("newLocationMessage", generateLocationMessage(user.name, coords.latitude, coords.longitude))
     });
 
     socket.on("disconnect", () => {
-       let user = users.removeUser(socket.id); //will return the user removed
+        let user = users.removeUser(socket.id); //will return the user removed
 
-       if(user){ //if user is actually removed, thennn...
-        io.to(user.room).emit("updateUserList",users.getUserList(user.room)); //emits and event called "updateUserList" to all users in the room that the user is in (user.room).  This gets a new user list by using the function defined in users.js "getUserList". In chat.js when this event occurs, the new users list is printed to the console.
-        io.to(user.room).emit("newMessage",generateMessage("Admin",`${user.name} has left`)); //emits an event called "newMessage".  A function called generateMessage is called which is defined in message.js. This returns a message object.  In chat.js, when this event occurs this message is used to create a new message.
-       }
+        if (user) { //if user is actually removed, thennn...
+            io.to(user.room).emit("updateUserList", users.getUserList(user.room)); //emits and event called "updateUserList" to all users in the room that the user is in (user.room).  This gets a new user list by using the function defined in users.js "getUserList". In chat.js when this event occurs, the new users list is appended to a ordered list and sent to a section of the webpage
+            io.to(user.room).emit("newMessage", generateMessage("Admin", `${user.name} has left`)); //emits an event called "newMessage".  A function called generateMessage is called which is defined in message.js. This returns a message object.  In chat.js, when this event occurs this message is used to create a new message.
+        }
     });
 });
 

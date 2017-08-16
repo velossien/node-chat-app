@@ -103,7 +103,6 @@ jQuery("#message-form").on("submit", function (event) {
     event.preventDefault();  //makes chrome stop reloading everytime a button is clicked (its default state)
 
     socket.emit("createMessage", {
-        from: "User",
         text: messageTextbox.val()
     }, function () {
         messageTextbox.val(""); //clear message box
