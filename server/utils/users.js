@@ -1,10 +1,4 @@
-[{
-    id: "dfsfsdf",
-    name: "Tara",
-    room: "lol room"
-}]
-
-//es6 way of creating a new class
+ //es6 way of creating a new class
 class Users {
     constructor() { //automatically called with arguments sent in like below, (constructors are optional for classes)
         this.users = [];

@@ -24,15 +24,31 @@ io.on("connection", (socket) => { //.on registers an event listener. "connection
             return callback("Name and room name are required."); //sends back error if name and room are not valid
         }
 
-        socket.join(params.room.toLowerCase()); //joins a room with the name given by params.room (.join is part of socket.io)
-        users.removeUser(socket.id); //removes user from any other rooms
-        users.addUser(socket.id, params.name, params.room); //adds user to room
+        //makes room name not case sensitive
+        let roomLowerCase = params.room.toLowerCase();
 
-        io.to(params.room).emit("updateUserList", users.getUserList(params.room));  //sends updated userList to everyone in the room.  (NOTE: updateUserList was defined in chat.js)
+        //Will send an error if user name taken
+        let roomUsers = users.getUserList(roomLowerCase);
+
+        if (roomUsers.length > 0) {
+            let duplicateUserList = roomUsers.filter((user) => {
+                return user === params.name;
+            });
+
+            if (duplicateUserList.length > 0) {
+                return callback("User name taken. Please choose another user name.");
+            };
+        };
+
+        socket.join(roomLowerCase); //joins a room with the name given by roomLowerCase (.join is part of socket.io)
+        users.removeUser(socket.id); //removes user from any other rooms
+        users.addUser(socket.id, params.name, roomLowerCase); //adds user to room
+
+        io.to(roomLowerCase).emit("updateUserList", users.getUserList(roomLowerCase));  //sends updated userList to everyone in the room.  (NOTE: updateUserList was defined in chat.js)
 
         socket.emit("newMessage", generateMessage("Admin", "Welcome to the chat app!")); //send welcome message only to socket
 
-        socket.broadcast.to(params.room).emit("newMessage", generateMessage("admin", `${params.name} has joined!`)); //sends "user"joined" message to everyone in the room except socket
+        socket.broadcast.to(roomLowerCase).emit("newMessage", generateMessage("admin", `${params.name} has joined!`)); //sends "user"joined" message to everyone in the room except socket
         callback();
     });
 
